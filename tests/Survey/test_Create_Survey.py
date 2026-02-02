@@ -69,7 +69,8 @@ def test_create_survey():
         page.locator("input[name=\"questions[new_4][options][]\"]").first.fill("X")
         page.locator("input[name=\"questions[new_4][options][]\"]").nth(1).click()
         page.locator("input[name=\"questions[new_4][options][]\"]").nth(1).fill("Y")
-        page.locator("#options_editor_new_4").get_by_role("button", name=" Add Option").click(delay=3000)
+        page.wait_for_timeout(5000)
+        page.locator("#options_editor_new_4").get_by_role("button", name=" Add Option").click(delay=5000)
         page.locator("input[name=\"questions[new_4][options][]\"]").nth(2).click()
         page.locator("input[name=\"questions[new_4][options][]\"]").nth(2).fill("Z")
         page.get_by_role("spinbutton", name="Number of items to rank").click(delay=3000)
@@ -80,11 +81,13 @@ def test_create_survey():
 
 
         page.get_by_role("button", name=" Create Survey Draft").click(delay=3000)
-        #page.once("dialog", lambda dialog: dialog.dismiss())
-        #page.get_by_role("button", name="  Publish Survey Now").click(delay=3000)
-        page.locator("#content > div > div > div > div.mt-5.pt-5 > div > div.card-body.px-5.py-4 > div.text-center.pb-2 > form > button").click(delay=3000)
-        page.locator("#content > div > div > div > div.mt-5.pt-5 > div > div.card-body.px-5.py-4 > div.text-center.pb-2 > form > button").click(delay=3000)
-        page.wait_for_timeout(3000)
+        page.once("dialog", lambda dialog: dialog.dismiss())
+        page.wait_for_timeout(5000)
+        #page.get_by_role("button", name="  Publish Survey Now").hover()
+        page.locator("form[method='post'] > .btn.btn-lg.btn-primary").click(delay=5000)
+        #page.get_by_role("button", name=" Publish Survey Now").press("Enter")
+        page.once("dialog", lambda dialog: dialog.accept())
+        page.wait_for_timeout(5000)
         page.keyboard.press("Enter")
         expect(page.locator("#content > div > div > div > div.alert.alert-success")).to_be_visible(timeout=5000)
 
