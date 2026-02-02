@@ -1,0 +1,44 @@
+from playwright.sync_api import Playwright, sync_playwright, expect
+import os
+
+#IS_CI = os.getenv("CI") is not None
+
+def test_upload_normal_ps():
+    """
+    Test for Upload - Normal PS.
+    """
+    with sync_playwright() as playwright:
+        browser = playwright.chromium.launch(
+            executable_path='C:/Program Files/Google/Chrome/Application/chrome.exe', 
+            headless=False
+        )
+        context = browser.new_context()
+        page = context.new_page()
+
+        #Login
+        page.goto("https://marben.staging.instaff.org/login?next=%2F")
+        page.get_by_role("textbox", name="Enter your email address").click()
+        page.get_by_role("textbox", name="Enter your email address").fill("marben@hutility.com")
+        page.get_by_role("textbox", name="Enter your email address").press("Tab")
+        page.get_by_role("textbox", name="Enter your password").fill("Temp1234!!")
+        page.get_by_role("button", name="Log In").click()
+
+
+        page.get_by_role("link", name="Announcements", exact=True).click()
+        page.wait_for_load_state("networkidle")
+
+        page.locator("#title").click()
+        page.locator("#title").fill("Regression Testing")
+        page.get_by_role("textbox", name="Select a date").click()
+        page.get_by_title("Next Month").click()
+        page.get_by_role("cell", name="2").first.click()
+        page.get_by_role("button", name="Confirm").click()
+        page.get_by_role("button", name="Add Announcement").click()
+        
+        page.wait_for_load_state("networkidle")
+        expect(page.locator("#smallbox1")).to_be_visible()
+
+        # ---------------------
+        context.close()
+        browser.close()
+

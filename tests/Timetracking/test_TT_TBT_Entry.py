@@ -35,7 +35,8 @@ def test_tt_tbt_entry():
         page.locator("#comments_timer").click()
         page.locator("#comments_timer").fill("Regression Test")
         page.wait_for_timeout(2000)
-        page.get_by_role("button", name="Start Timer").click(delay=5000)
+        page.locator("#tt_new_entry_timer > fieldset > div.form-actions > div > div > button").click()
+        #page.get_by_role("button", name="Start Timer").click(delay=5000)
         # Wait for Ok button to appear and click it
         ok_button = page.get_by_role("button", name="Ok", exact=True)
         ok_button.wait_for(state="visible", timeout=30000)

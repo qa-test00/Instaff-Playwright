@@ -30,14 +30,26 @@ def test_tt_data_entry():
         page.get_by_role("textbox", name="Select a date").click(delay=3000)
         page.get_by_role("columnheader", name=" Next Month").click(delay=3000)
         page.get_by_role("cell", name="10").first.click(delay=3000)
+       
         page.locator("#comments").click(delay=3000)
+
+
         page.locator("#comments").fill("Reg Test")
         page.get_by_role("button", name="Add Selected").click(delay=3000)
         expect(page.locator("#smallbox1")).to_be_visible() # Verify success message
-        page.get_by_role("link", name="Awaiting Approval").click(delay=3000)
+
+        page.wait_for_load_state("networkidle")
         page.get_by_role("link", name="Unsubmitted Entries").click(delay=3000)
+        page.wait_for_load_state("networkidle")
+        page.wait_for_timeout(5000)
+        
+        entryDate = page.locator("#dt_basic_unsubmitted > tbody > tr:nth-child(1) > td:nth-child(1)").text_content()
+        print(entryDate.strip())
+
         page.locator("#checkAllUnsubmitted").uncheck()
-        page.get_by_role("row", name="02/10/2026 Reg Test 8.00 0.00").locator("#unsubmitted_entry_checkbox").check()
+
+        rowName = f"{entryDate} Reg Test 8.00"
+        page.get_by_role("row", name=rowName).locator("#unsubmitted_entry_checkbox").check()
         page.get_by_role("checkbox", name="I Certify That All Above Time").check()
         page.get_by_role("button", name="Submit Selected Entries To").click(delay=3000)
         expect(page.locator("#smallbox1")).to_be_visible() # Verify success message
