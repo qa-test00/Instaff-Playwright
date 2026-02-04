@@ -3,9 +3,9 @@ import os
 
 #IS_CI = os.getenv("CI") is not None
 
-def test_upload_normal_ps():
+def test_delete_announcement():
     """
-    Test for Upload - Normal PS.
+    Test for Announcement - Delete Announcement.
     """
     with sync_playwright() as playwright:
         browser = playwright.chromium.launch(
