@@ -20,6 +20,10 @@ ORDERED_TEST_FILES: tuple[str, ...] = (
     "tests/Timetracking/test_Approve_TT_Entry_Manager.py",
     "tests/Timetracking/test_Approve_TT_Entry_Admin.py",
     "tests/Timetracking/test_TT_TBT_Entry.py",
+    "tests/Timetracking/test_Approve_TT_Entry_Manager.py",
+    "tests/Timetracking/test_Approve_TT_Entry_Admin.py",
+    "tests/Timetracking/test_TT_Reports.py",
+    "tests/Timetracking/test_TT_Attendance_Report.py",
 )
 
 

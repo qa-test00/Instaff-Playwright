@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(HEADLESS=false python -m pytest tests/Timetracking/test_TT_TBT_Entry.py -s --timeout=120)",
+      "Bash(HEADLESS=false python -m pytest tests/Timetracking/test_TT_TBT_Entry.py -s)",
+      "Bash(python -m pytest tests/Timetracking/test_TT_TBT_Entry.py -s)",
+      "Bash(SLOW_MO=1500 python -m pytest tests/Timetracking/test_TT_TBT_Entry.py -s)",
+      "Bash(python -m pytest tests/Survey/test_Create_Survey.py -v)",
+      "Bash(python -m pytest tests/Survey/test_Create_Survey.py -v --headed --slowmo 1000)",
+      "Bash(python -m pytest tests/Survey/test_Create_Survey.py -v -s)",
+      "Bash(npm list -g @playwright/mcp)",
+      "Bash(npm install -g @playwright/mcp)",
+      "Bash(where npx)",
+      "Bash(npx playwright-mcp --version)",
+      "Bash(python -m pytest tests/Timetracking/test_TT_Reports.py -v -s --headed)",
+      "Bash(python -m pytest tests/Timetracking/test_TT_Reports.py -v -s)",
+      "Bash(python -m pytest tests/Timetracking/test_TT_Bulk_Add_Entries.py -v)",
+      "Bash(python -c \":*)",
+      "Bash(python inspect_bulk.py)"
+    ]
+  }
+}
