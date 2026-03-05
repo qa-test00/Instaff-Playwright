@@ -25,11 +25,13 @@ def test_view_analytics_responses():
         page.get_by_role("button", name="Log In").click()
 
         # Navigate to Survey -> Close Survey
-        page.get_by_role("link", name="Survey Management").click(delay=3000)
-        page.wait_for_timeout(5000)
-        page.get_by_role("row", name="Regression Testing  Always").get_by_role("button").nth(2).click(delay=3000)
+        page.get_by_role("link", name="Survey Management").click()
+        page.wait_for_load_state("networkidle")
+        page.get_by_role("row", name="Regression Testing  Always").get_by_role("button").nth(2).click()
+        page.wait_for_load_state("networkidle")
         page.once("dialog", lambda dialog: dialog.accept())
-        page.get_by_role("button", name=" Close Survey").click(delay=3000)
+        page.get_by_role("button", name=" Close Survey").click()
+        page.wait_for_load_state("networkidle")
         page.once("dialog", lambda dialog: dialog.accept())
         expect(page.get_by_text("\"Regression Testing\" has been")).to_be_visible()
 

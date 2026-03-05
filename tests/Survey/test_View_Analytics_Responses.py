@@ -25,10 +25,14 @@ def test_view_analytics_responses():
         page.get_by_role("button", name="Log In").click()
 
         # Navigate to Survey -> View Analytics Responses
-        page.get_by_role("link", name="Survey Management").click(delay=3000)
-        page.get_by_role("row", name="Regression Testing  Always").get_by_role("button").nth(1).click(delay=3000)
-        page.get_by_role("link", name=" View Responses").click(delay=3000)
+        page.get_by_role("link", name="Survey Management").click()
+        page.wait_for_load_state("networkidle")
+        page.get_by_role("row", name="Regression Testing  Always").get_by_role("button").nth(1).click()
+        page.wait_for_load_state("networkidle")
+        page.get_by_role("link", name=" View Responses").click()
+        page.wait_for_load_state("networkidle")
         expect(page.get_by_role("heading", name=" Individual Responses (1)")).to_be_visible()
+        page.wait_for_load_state("networkidle")
         page.get_by_text("Auto Employee (marben+").click()
         expect(page.get_by_role("link", name=" View Analytics")).to_be_visible()
 

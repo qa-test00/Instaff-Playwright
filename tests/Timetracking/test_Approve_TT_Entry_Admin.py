@@ -27,8 +27,10 @@ def test_approve_tt_entry_admin():
         page.locator("#left-panel").get_by_role("link", name="Time Tracking", exact=True).click()
         #page.get_by_role("link", name="Details").nth(2).click(delay=3000)
         page.goto("https://marben.staging.instaff.org/admin/timetracking/59")
+        page.wait_for_load_state("networkidle")
         page.locator("input[name=\"entries_checkboxes_admin_awaiting_approval\"]").check()
-        page.get_by_role("button", name="Approve Selected Entries").click(delay=3000)
+        page.wait_for_load_state("networkidle")
+        page.get_by_role("button", name="Approve Selected Entries").click()
         expect(page.locator("#smallbox1")).to_be_visible() # Verify success message
 
         # ---------------------

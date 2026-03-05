@@ -27,7 +27,7 @@ def test_tt_data_entry():
         # Fill in data entry details
         page.locator("#hours").click(delay=3000)
         page.locator("#hours").fill("8")
-        page.get_by_role("textbox", name="Select a date").click(delay=3000)
+        page.locator("#taskdate").click(delay=3000)
         page.get_by_role("columnheader", name=" Next Month").click(delay=3000)
         page.get_by_role("cell", name="10").first.click(delay=3000)
        

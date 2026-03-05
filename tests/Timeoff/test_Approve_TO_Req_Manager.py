@@ -24,8 +24,7 @@ def test_approve_to_req_manager():
         page.get_by_role("button", name="Log In").click()
 
         # Navigate to Time Off -> Manager
-        page.get_by_role("link", name=" Manager 1 ").click()
-        page.goto("https://marben.staging.instaff.org/manager/timeoff")
+        page.goto("https://marben.staging.instaff.org/manager/timeoff?next=/manager/timeoff")
         #page.get_by_role("link", name="Time Off Requests").click(delay=3000)
         # If approval triggers a confirm dialog, accept it reliably.
         page.once("dialog", lambda dialog: dialog.accept())
