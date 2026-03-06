@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="22.245" timestamp="2026-03-06T22:14:08.418281+08:00" hostname="DESKTOP-CQIUSJN"><testcase classname="tests.Timetracking.test_TT_Attendance_Report" name="test_tt_attendance_report" time="21.936"><failure message="AssertionError: Locator expected to be visible&#10;Actual value: &lt;element(s) not found&gt; &#10;Call log:&#10;  - Expect &quot;to_be_visible&quot; with timeout 5000ms&#10;  - waiting for locator(&quot;table.k-selectable tbody tr&quot;).first">tests\Timetracking\test_TT_Attendance_Report.py:12: in test_tt_attendance_report
+    expect(admin_page.locator("table.k-selectable tbody tr").first).to_be_visible()
+E   AssertionError: Locator expected to be visible
+E   Actual value: &lt;element(s) not found&gt; 
+E   Call log:
+E     - Expect "to_be_visible" with timeout 5000ms
+E     - waiting for locator("table.k-selectable tbody tr").first</failure></testcase></testsuite></testsuites>

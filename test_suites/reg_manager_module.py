@@ -1,10 +1,10 @@
 """
-Run an ordered suite of pytest files (sequentially).
+Run an ordered suite of pytest files for the Manager module (sequentially).
 
 Usage (from project root):
-  python test_suites/re_timeoff_module.py
-  python test_suites/re_timeoff_module.py -- --headed -s
-  python test_suites/re_timeoff_module.py --continue-on-failure -- -s
+  python test_suites/reg_manager_module.py
+  python test_suites/reg_manager_module.py -- --headed -s
+  python test_suites/reg_manager_module.py --continue-on-failure -- -s
 """
 
 from __future__ import annotations
@@ -16,14 +16,7 @@ from pathlib import Path
 
 
 ORDERED_TEST_FILES: tuple[str, ...] = (
-    "tests/Timeoff/test_TO_Create_Req.py",
-    "tests/Timeoff/test_Approve_TO_Req_Manager.py",
-    "tests/Timeoff/test_Deny_TO_Req_Admin.py",
-    "tests/Timeoff/test_TO_Add_Req_For_Employee.py",
-    "tests/Timeoff/test_TO_Mgr_Add_Req_For_Employee.py",
-    "tests/Timeoff/test_Generate_TO_Reports.py",
-    "tests/Timeoff/test_TO_Time_Restriction.py",
-    "tests/Timeoff/test_TO_Print_Download_Calendar.py",
+    "tests/Manager/test_Manager_View_Files.py",
 )
 
 
@@ -71,4 +64,3 @@ def main(argv: list[str]) -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main(sys.argv[1:]))
-

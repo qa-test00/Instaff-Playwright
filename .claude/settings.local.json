@@ -16,7 +16,10 @@
       "Bash(python -m pytest tests/Timetracking/test_TT_Reports.py -v -s)",
       "Bash(python -m pytest tests/Timetracking/test_TT_Bulk_Add_Entries.py -v)",
       "Bash(python -c \":*)",
-      "Bash(python inspect_bulk.py)"
+      "Bash(python inspect_bulk.py)",
+      "Bash(python -m pytest tests/Timeoff/test_TO_Time_Restriction.py -v)",
+      "Bash(python -m pytest tests/Timeoff/test_TO_Add_Req_For_Employee.py -v)",
+      "Bash(python -:*)"
     ]
   }
 }

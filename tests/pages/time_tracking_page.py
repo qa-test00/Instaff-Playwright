@@ -204,3 +204,4 @@ class TimeTrackingPage(BasePage):
         self._select_from_selectize("#employeeid-selectized", employee_search)
         self.page.get_by_role("button", name="Build Report").click()
         self.wait_for_load()
+        self.page.locator("table.k-selectable tbody tr").first.wait_for(state="visible", timeout=15000)

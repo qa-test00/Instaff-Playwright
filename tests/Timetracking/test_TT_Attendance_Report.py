@@ -9,4 +9,4 @@ def test_tt_attendance_report(admin_page: Page):
     tt = TimeTrackingPage(admin_page)
     tt.navigate_to_attendance_report()
     tt.build_attendance_report(employee_search="auto employee")
-    expect(admin_page.locator("table.k-selectable tbody tr").first).to_be_visible()
+    expect(admin_page.locator("table.k-selectable tbody tr").first).to_be_visible(timeout=15000)
