@@ -8,5 +8,5 @@ def test_tt_attendance_report(admin_page: Page):
     """Time Tracking – admin builds an attendance time report and verifies the summary table."""
     tt = TimeTrackingPage(admin_page)
     tt.navigate_to_attendance_report()
-    tt.build_attendance_report(employee_search="auto employee")
+    tt.build_attendance_report(employee_search="John Rees Haley III")
     expect(admin_page.locator("table.k-selectable tbody tr").first).to_be_visible(timeout=15000)

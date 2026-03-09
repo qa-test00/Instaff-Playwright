@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="20.097" timestamp="2026-03-10T02:06:17.865527+08:00" hostname="DESKTOP-CQIUSJN"><testcase classname="tests.Survey.test_View_Analytics_Responses" name="test_view_analytics_responses" time="19.845"><failure message="AssertionError: Locator expected to be visible&#10;Actual value: &lt;element(s) not found&gt; &#10;Call log:&#10;  - Expect &quot;to_be_visible&quot; with timeout 5000ms&#10;  - waiting for get_by_role(&quot;heading&quot;, name=&quot; Individual Responses (1)&quot;)">tests\Survey\test_View_Analytics_Responses.py:16: in test_view_analytics_responses
+    ).to_be_visible()
+      ^^^^^^^^^^^^^^^
+E   AssertionError: Locator expected to be visible
+E   Actual value: &lt;element(s) not found&gt; 
+E   Call log:
+E     - Expect "to_be_visible" with timeout 5000ms
+E     - waiting for get_by_role("heading", name=" Individual Responses (1)")</failure></testcase></testsuite></testsuites>

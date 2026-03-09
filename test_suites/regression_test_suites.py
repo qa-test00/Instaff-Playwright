@@ -1,11 +1,11 @@
 """
 Run ALL test suite modules in order, sequentially.
+Always continues to the next module even if the current one fails.
 Captures failures, logs a summary, and references screenshots saved by conftest.
 
 Usage (from project root):
   python test_suites/regression_test_suites.py
   python test_suites/regression_test_suites.py -- --headed -s
-  python test_suites/regression_test_suites.py --continue-on-failure -- -s
 """
 
 from __future__ import annotations
@@ -60,12 +60,39 @@ ORDERED_TEST_FILES: tuple[str, ...] = (
     "tests/Manager/test_Manager_View_Files.py",
     # --- Paystubs ---
     "tests/Paystubs/test_View_Paystubs.py",
+    # --- Employee Files ---
+    "tests/Employee Filesv2/test_View_Files_Personal_Employee.py",
 )
+
+
+_MODULE_LABELS: dict[str, str] = {
+    "Timetracking":     "Time Tracking",
+    "Timeoff":          "Time Off",
+    "Holiday":          "Holiday",
+    "Announcement":     "Announcement",
+    "Survey":           "Survey",
+    "Certifications":   "Certifications",
+    "Manager":          "Manager",
+    "Paystubs":         "Paystubs",
+    "Employee Filesv2": "Employee Files",
+}
 
 
 def _safe_filename(path: str) -> str:
     """Convert a test file path to a safe filename stem."""
     return path.replace("/", "_").replace("\\", "_").replace(".py", "")
+
+
+def _friendly_test_name(test_file: str) -> str:
+    """'tests/Timetracking/test_TT_Data_Entry.py' → 'TT Data Entry'"""
+    stem = Path(test_file).stem  # e.g. test_TT_Data_Entry
+    return stem.removeprefix("test_").replace("_", " ")
+
+
+def _module_label(test_file: str) -> str:
+    parts = Path(test_file).parts  # ('tests', 'Timetracking', 'test_....py')
+    folder = parts[1] if len(parts) >= 3 else "Other"
+    return _MODULE_LABELS.get(folder, folder)
 
 
 def _run_pytest_for_file(
@@ -133,43 +160,82 @@ def _write_summary(
     passed_files = sum(1 for r in results if r["rc"] == 0)
     failed_files = total_files - passed_files
     all_failures = [f for r in results for f in r["failures"]]
+    overall_status = "PASSED" if failed_files == 0 else "FAILED"
+
+    # Group results by module, preserving order of first appearance.
+    module_order: list[str] = []
+    module_results: dict[str, list[dict]] = {}
+    for r in results:
+        mod = _module_label(r["file"])
+        if mod not in module_results:
+            module_order.append(mod)
+            module_results[mod] = []
+        module_results[mod].append(r)
+
+    W = 72  # report width
+    SEP  = "=" * W
+    SEP2 = "-" * W
+
+    def section(title: str) -> str:
+        return f"\n{SEP}\n  {title}\n{SEP2}"
 
     lines: list[str] = []
-    lines.append("=" * 70)
-    lines.append("  REGRESSION TEST SUMMARY")
-    lines.append(f"  Run ID  : {run_id}")
-    lines.append(f"  Date    : {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-    lines.append("=" * 70)
-    lines.append(f"  Test files  : {total_files}")
-    lines.append(f"  Passed      : {passed_files}")
-    lines.append(f"  Failed      : {failed_files}")
-    lines.append(f"  Total fails : {len(all_failures)}")
-    lines.append("=" * 70)
 
-    if all_failures:
-        lines.append("\nFAILED TESTS")
-        lines.append("-" * 70)
-        for idx, f in enumerate(all_failures, 1):
-            lines.append(f"\n[{idx}] {f['test']}")
-            lines.append(f"     Type       : {f['type'].upper()}")
-            lines.append(f"     Reason     : {f['message']}")
-            if f["detail"]:
-                # Indent the traceback detail neatly.
-                detail_lines = f["detail"].splitlines()
-                for dl in detail_lines[-10:]:   # last 10 lines of traceback
-                    lines.append(f"               {dl}")
-            lines.append(f"     Screenshot : {f['screenshot']}")
+    # ── Header ──────────────────────────────────────────────────────────
+    lines.append(SEP)
+    lines.append("  REGRESSION TEST REPORT")
+    lines.append(f"  Date   : {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    lines.append(f"  Run ID : {run_id}")
+    lines.append(SEP)
+    lines.append(f"  OVERALL : {overall_status}  |  {passed_files} / {total_files} test files passed  |  {len(all_failures)} failure(s)")
+    lines.append(SEP)
+
+    # ── Module summary table ────────────────────────────────────────────
+    lines.append(section("MODULE SUMMARY"))
+    lines.append(f"  {'Module':<26} {'Files':>5}   {'Passed':>6}   {'Failed':>6}   Status")
+    lines.append(f"  {'-'*26} {'-----':>5}   {'------':>6}   {'------':>6}   ------")
+    for mod in module_order:
+        mod_results = module_results[mod]
+        mod_passed = sum(1 for r in mod_results if r["rc"] == 0)
+        mod_failed = len(mod_results) - mod_passed
+        status = "PASSED" if mod_failed == 0 else "FAILED"
+        lines.append(f"  {mod:<26} {len(mod_results):>5}   {mod_passed:>6}   {mod_failed:>6}   {status}")
+    lines.append(SEP2)
+
+    # ── Per-module test file results ────────────────────────────────────
+    lines.append(section("TEST RESULTS"))
+    # Track duplicates within each module for labelling
+    for mod in module_order:
+        lines.append(f"\n  [ {mod} ]")
+        seen: dict[str, int] = {}
+        for r in module_results[mod]:
+            name = _friendly_test_name(r["file"])
+            seen[name] = seen.get(name, 0) + 1
+        run_count: dict[str, int] = {}
+        for r in module_results[mod]:
+            name = _friendly_test_name(r["file"])
+            run_count[name] = run_count.get(name, 0) + 1
+            label = f"{name} (run {run_count[name]})" if seen[name] > 1 else name
+            status = "PASS" if r["rc"] == 0 else "FAIL"
+            lines.append(f"    {status}  {label}")
+    lines.append("\n" + SEP2)
+
+    # ── Failures ────────────────────────────────────────────────────────
+    lines.append(section(f"FAILURES  ({len(all_failures)})"))
+    if not all_failures:
+        lines.append("\n  None – all tests passed.")
     else:
-        lines.append("\n  All tests PASSED.")
-
-    lines.append("\n" + "=" * 70)
-    lines.append("FILE-LEVEL RESULTS")
-    lines.append("-" * 70)
-    for r in results:
-        status = "PASS" if r["rc"] == 0 else "FAIL"
-        lines.append(f"  [{status}] {r['file']}")
-
-    lines.append("=" * 70 + "\n")
+        for idx, f in enumerate(all_failures, 1):
+            # Derive a friendly name from the classname/test name in JUnit XML
+            raw_name = f["test"].split(".")[-1]  # last segment is the function name
+            friendly = raw_name.removeprefix("test_").replace("_", " ")
+            lines.append(f"\n  [{idx}] {friendly}")
+            lines.append(f"       Reason     : {f['message']}")
+            if f["detail"]:
+                for dl in f["detail"].splitlines()[-5:]:
+                    lines.append(f"                  {dl}")
+            lines.append(f"       Screenshot : {f['screenshot']}")
+    lines.append("\n" + SEP + "\n")
 
     summary_path.write_text("\n".join(lines), encoding="utf-8")
     return summary_path
@@ -177,11 +243,6 @@ def _write_summary(
 
 def main(argv: list[str]) -> int:
     parser = argparse.ArgumentParser(description="Run all test suite files in a fixed order.")
-    parser.add_argument(
-        "--continue-on-failure",
-        action="store_true",
-        help="Keep running remaining files even if one fails.",
-    )
     parser.add_argument(
         "pytest_args",
         nargs=argparse.REMAINDER,
@@ -205,7 +266,6 @@ def main(argv: list[str]) -> int:
 
     overall_rc = 0
     results: list[dict] = []
-    stopped_early = False
 
     for test_file in ORDERED_TEST_FILES:
         xml_path = junit_dir / f"{_safe_filename(test_file)}.xml"
@@ -215,10 +275,7 @@ def main(argv: list[str]) -> int:
 
         if rc != 0:
             overall_rc = rc
-            if not args.continue_on_failure:
-                print(f"\nStopping: {test_file} failed with exit code {rc}.")
-                stopped_early = True
-                break
+            print(f"\n  [!] {test_file} failed — continuing with next module.")
 
     summary_path = _write_summary(project_root, run_id, results)
 
@@ -229,8 +286,6 @@ def main(argv: list[str]) -> int:
 
     print(f"\n{'='*60}")
     print(f"  SUMMARY  |  Passed: {passed}  |  Failed: {len(failed_list)}")
-    if stopped_early:
-        print("  (Run stopped on first failure — use --continue-on-failure to run all)")
     if failed_list:
         print("\n  Failed files:")
         for f in failed_list:
