@@ -1,98 +1,158 @@
 # Playwright Python Project
 
-A Python-only Playwright testing project using pytest.
+A Playwright + pytest automation suite for the Instaff staging HR web application.
 
 ## Setup
 
-1. **Create and activate a virtual environment** (if not already done):
-   ```powershell
+1. **Create and activate a virtual environment**:
+   ```bash
    python -m venv venv
    .\venv\Scripts\Activate.ps1
    ```
 
 2. **Install dependencies**:
-   ```powershell
+   ```bash
    pip install -r requirements.txt
    ```
 
 3. **Install Playwright browsers**:
-   ```powershell
+   ```bash
    python -m playwright install
    ```
+
+## Configuration
+
+All settings are centralised in `config.py` and can be overridden via environment variables:
+
+| Variable | Default | Description |
+|---|---|---|
+| `BASE_URL` | `https://marben.staging.instaff.org` | Target application URL |
+| `HEADLESS` | `false` | Run browser headlessly |
+| `SLOW_MO` | `0` | Milliseconds between actions (debug aid) |
+| `DEFAULT_TIMEOUT` | `30000` | Default element timeout (ms) |
+| `NAVIGATION_TIMEOUT` | `30000` | Navigation timeout (ms) |
+| `ADMIN_EMAIL` | *(see config.py)* | Admin user credentials |
+| `EMPLOYEE_EMAIL` | *(see config.py)* | Employee user credentials |
 
 ## Running Tests
 
 Run all tests:
-```powershell
+```bash
 pytest
 ```
 
+Run a specific module folder:
+```bash
+pytest tests/Timetracking/
+```
+
 Run a specific test file:
-```powershell
-pytest tests/test_TT_TBT_Entry.py
+```bash
+pytest tests/Timetracking/test_TT_TBT_Entry.py
 ```
 
 Run with verbose output:
-```powershell
+```bash
 pytest -v
 ```
 
-Run with browser visible (default):
-```powershell
-pytest --headed
-```
-
 Run headless:
-```powershell
-pytest --headless
+```bash
+HEADLESS=true pytest
 ```
-
-## Using Playwright CLI (Python)
-
-Since this is a Python-only project, use Python's module system to run Playwright CLI commands:
-
-**Code generation** (interactive recorder):
-```powershell
-python -m playwright codegen https://marben.staging.instaff.org
-```
-
-**Install browsers**:
-```powershell
-python -m playwright install
-```
-
-**Show help**:
-```powershell
-python -m playwright --help
-```
-
-**Note**: Do NOT use `playwright` directly - use `python -m playwright` instead.
 
 ## Project Structure
 
 ```
 .
-├── tests/
-│   ├── conftest.py          # Shared pytest fixtures
-│   ├── test_TT_TBT_Entry.py # Track By Timer test
-│   ├── test_TT_Data_Entry.py # Data Entry test
-│   └── test_example.py      # Example test
-├── requirements.txt         # Python dependencies
-├── pytest.ini              # Pytest configuration
-└── README.md               # This file
+├── config.py                        # Centralised config & credentials
+├── pytest.ini                       # Pytest configuration
+├── shared_data.json                 # Shared state between tests (e.g. holiday name/date)
+├── requirements.txt
+└── tests/
+    ├── conftest.py                  # Shared fixtures: page, admin_page, employee_page
+    ├── pages/                       # Page Object Model
+    │   ├── base_page.py
+    │   ├── login_page.py
+    │   ├── time_tracking_page.py
+    │   ├── time_off_page.py
+    │   ├── holiday_page.py
+    │   ├── announcement_page.py
+    │   ├── survey_page.py
+    │   ├── certifications_page.py
+    │   ├── paystubs_page.py
+    │   ├── manager_page.py
+    │   ├── company_directory_page.py
+    │   ├── employee_files_page.py
+    │   └── upload_docs_page.py
+    ├── Timetracking/
+    │   ├── test_TT_TBT_Entry.py
+    │   ├── test_TT_Data_Entry.py
+    │   ├── test_TT_Bulk_Add_Entries.py
+    │   ├── test_TT_Reports.py
+    │   ├── test_TT_Attendance_Report.py
+    │   ├── test_Approve_TT_Entry_Admin.py
+    │   └── test_Approve_TT_Entry_Manager.py
+    ├── Timeoff/
+    │   ├── test_TO_Create_Req.py
+    │   ├── test_TO_Add_Req_For_Employee.py
+    │   ├── test_TO_Mgr_Add_Req_For_Employee.py
+    │   ├── test_Approve_TO_Req_Manager.py
+    │   ├── test_Deny_TO_Req_Admin.py
+    │   ├── test_TO_Time_Restriction.py
+    │   ├── test_TO_Print_Download_Calendar.py
+    │   └── test_Generate_TO_Reports.py
+    ├── Holiday/
+    │   ├── test_Create_Holiday.py
+    │   ├── test_Verify_Created_Holiday.py
+    │   └── test_Delete_Holiday.py
+    ├── Announcement/
+    │   ├── test_Create_Announcement.py
+    │   ├── test_View_Announcement.py
+    │   └── test_Delete_Announcement.py
+    ├── Survey/
+    │   ├── test_Create_Survey.py
+    │   ├── test_Respond_survey.py
+    │   ├── test_View_Analytics_Responses.py
+    │   └── test_Close_Survey.py
+    ├── Certifications/
+    │   ├── test_Cert_View.py
+    │   ├── test_Cert_Add_Custom_Fields.py
+    │   ├── test_Cert_Approve_Pending.py
+    │   └── test_Cert_Delete_Record.py
+    ├── Paystubs/
+    │   └── test_View_Paystubs.py
+    ├── Manager/
+    │   └── test_Manager_View_Files.py
+    ├── CompanyDirectory/
+    │   ├── test_Verify_List.py
+    │   └── test_Organization_Chart.py
+    ├── UploadDocs/
+    │   ├── test_Upload_Normal_PS.py
+    │   └── test_UploadScheduled_PS.py
+    └── Employee Filesv2/
+        └── test_View_Files_Personal_Employee.py
 ```
 
-## Using Fixtures
+## Architecture
 
-The `conftest.py` file provides reusable fixtures:
-- `playwright`: Session-scoped Playwright instance
-- `browser`: Function-scoped browser instance
-- `context`: Function-scoped browser context with geolocation
-- `page`: Function-scoped page instance
+- **Page Object Model** — each feature module has a corresponding page class in `tests/pages/`
+- **Fixtures** — `conftest.py` provides `page` (admin), `admin_page`, and `employee_page`; browser is session-scoped, context and page are function-scoped (isolated per test)
+- **Shared state** — `shared_data.json` passes data between dependent tests (e.g. Holiday create → verify → delete)
 
-Example usage:
-```python
-def test_my_feature(page):
-    page.goto("https://example.com")
-    # Your test code here
+## Playwright CLI
+
+Use Python's module system for Playwright CLI commands:
+
+```bash
+# Interactive code recorder
+python -m playwright codegen https://marben.staging.instaff.org
+
+# Install browsers
+python -m playwright install
+
+# Help
+python -m playwright --help
 ```
+
+> Note: Use `python -m playwright` — do NOT call `playwright` directly.

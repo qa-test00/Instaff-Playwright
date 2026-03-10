@@ -11,6 +11,8 @@ Usage (from project root):
 from __future__ import annotations
 
 import argparse
+import re
+import shutil
 import subprocess
 import sys
 import xml.etree.ElementTree as ET
@@ -76,6 +78,78 @@ _MODULE_LABELS: dict[str, str] = {
     "Paystubs":         "Paystubs",
     "Employee Filesv2": "Employee Files",
 }
+
+
+def _humanize_reason(message: str, detail: str) -> str:
+    """Convert raw Playwright/pytest error text into a plain-English sentence."""
+    msg = message.strip()
+    det = detail.strip()
+
+    timeout_match = re.search(r"Timeout (\d+)ms exceeded", msg)
+    timeout_ms    = timeout_match.group(1) if timeout_match else None
+
+    # ── Timeout errors ────────────────────────────────────────────────────
+    if "TimeoutError" in msg or (timeout_ms and "exceeded" in msg):
+        if "Page.goto" in msg or "navigation" in msg.lower():
+            return f"Page navigation timed out after {timeout_ms}ms"
+
+        # Look for the locator/selector being waited on inside the detail block
+        locator_m = re.search(r'waiting for locator\("([^"]+)"\)', det)
+        selector_m = re.search(r"waiting for selector ['\"]?([^'\"\\n]+)['\"]?", det)
+        visible_m  = re.search(r"to be (visible|hidden|enabled|disabled|editable)", det)
+
+        state = f" to be {visible_m.group(1)}" if visible_m else ""
+
+        if locator_m:
+            return f"Timed out after {timeout_ms}ms – element not found{state}: {locator_m.group(1)}"
+        if selector_m:
+            return f"Timed out after {timeout_ms}ms – element not found{state}: {selector_m.group(1).strip()}"
+        return f"Operation timed out after {timeout_ms}ms"
+
+    # ── Assertion errors ───────────────────────────────────────────────────
+    if "AssertionError" in msg:
+        # Prefer the assert detail line from the traceback
+        for line in det.splitlines():
+            stripped = line.strip()
+            if stripped.startswith(("assert ", "AssertionError")):
+                clean = re.sub(r"^AssertionError:\s*", "", stripped)
+                return f"Assertion failed: {clean}"
+        inline = re.sub(r"^.*AssertionError:\s*", "", msg)
+        return f"Assertion failed: {inline}" if inline else "Assertion failed"
+
+    # ── Generic Playwright element/action errors ───────────────────────────
+    for pattern, label in [
+        (r"element is not visible",           "Element is not visible"),
+        (r"element is not enabled",           "Element is not enabled/clickable"),
+        (r"element is outside of the viewport","Element is outside the viewport"),
+        (r"Target page.*closed",              "Page or tab was closed unexpectedly"),
+        (r"net::ERR_",                        "Network error – page failed to load"),
+        (r"strict mode violation",            "Multiple elements matched the locator (strict mode)"),
+    ]:
+        if re.search(pattern, msg + det, re.IGNORECASE):
+            return label
+
+    # ── Strip Python module path prefix (e.g. playwright._impl._errors.Error:) ─
+    clean = re.sub(r"^[\w.]+Error:\s*", "", msg)
+    return clean if clean and clean != msg else msg
+
+
+def _cleanup_old_results(project_root: Path) -> None:
+    """Delete screenshots, junit XMLs, and summary reports from previous runs."""
+    reports_dir = project_root / "reports"
+
+    screenshots_dir = reports_dir / "screenshots"
+    if screenshots_dir.exists():
+        shutil.rmtree(screenshots_dir)
+
+    junit_dir = reports_dir / "junit"
+    if junit_dir.exists():
+        shutil.rmtree(junit_dir)
+
+    for summary in reports_dir.glob("regression_summary_*.txt"):
+        summary.unlink()
+
+    print("  Previous reports cleared.")
 
 
 def _safe_filename(path: str) -> str:
@@ -230,10 +304,7 @@ def _write_summary(
             raw_name = f["test"].split(".")[-1]  # last segment is the function name
             friendly = raw_name.removeprefix("test_").replace("_", " ")
             lines.append(f"\n  [{idx}] {friendly}")
-            lines.append(f"       Reason     : {f['message']}")
-            if f["detail"]:
-                for dl in f["detail"].splitlines()[-5:]:
-                    lines.append(f"                  {dl}")
+            lines.append(f"       Reason     : {_humanize_reason(f['message'], f['detail'])}")
             lines.append(f"       Screenshot : {f['screenshot']}")
     lines.append("\n" + SEP + "\n")
 
@@ -255,6 +326,7 @@ def main(argv: list[str]) -> int:
         extra_pytest_args = extra_pytest_args[1:]
 
     project_root = Path(__file__).resolve().parent.parent
+    _cleanup_old_results(project_root)
     run_id = datetime.now().strftime("%Y%m%d_%H%M%S")
     junit_dir = project_root / "reports" / "junit" / run_id
     junit_dir.mkdir(parents=True, exist_ok=True)
@@ -294,7 +366,7 @@ def main(argv: list[str]) -> int:
         print(f"\n  Failed tests ({len(all_failures)}):")
         for idx, f in enumerate(all_failures, 1):
             print(f"    [{idx}] {f['test']}")
-            print(f"         Reason     : {f['message']}")
+            print(f"         Reason     : {_humanize_reason(f['message'], f['detail'])}")
             print(f"         Screenshot : {f['screenshot']}")
     print(f"\n  Full report saved to:")
     print(f"    {summary_path}")

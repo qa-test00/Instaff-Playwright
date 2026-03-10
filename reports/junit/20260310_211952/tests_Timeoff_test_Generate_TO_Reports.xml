@@ -1,0 +1,1 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="0" skipped="0" tests="1" time="15.750" timestamp="2026-03-10T21:25:20.650496+08:00" hostname="DESKTOP-CQIUSJN"><testcase classname="tests.Timeoff.test_Generate_TO_Reports" name="test_generate_to_reports" time="15.696" /></testsuite></testsuites>

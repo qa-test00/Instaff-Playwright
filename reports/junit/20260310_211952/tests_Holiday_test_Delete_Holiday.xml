@@ -1,0 +1,1 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="0" skipped="0" tests="1" time="14.172" timestamp="2026-03-10T21:26:34.667706+08:00" hostname="DESKTOP-CQIUSJN"><testcase classname="tests.Holiday.test_Delete_Holiday" name="test_delete_holiday" time="14.127" /></testsuite></testsuites>

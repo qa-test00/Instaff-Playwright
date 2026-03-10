@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="20.457" timestamp="2026-03-10T02:06:39.033475+08:00" hostname="DESKTOP-CQIUSJN"><testcase classname="tests.Survey.test_Close_Survey" name="test_close_survey" time="20.001"><failure message="AssertionError: Locator expected to be visible&#10;Actual value: &lt;element(s) not found&gt; &#10;Call log:&#10;  - Expect &quot;to_be_visible&quot; with timeout 5000ms&#10;  - waiting for get_by_text(&quot;\&quot;Regression Testing\&quot; has been&quot;)">tests\Survey\test_Close_Survey.py:14: in test_close_survey
-    ).to_be_visible()
-      ^^^^^^^^^^^^^^^
-E   AssertionError: Locator expected to be visible
-E   Actual value: &lt;element(s) not found&gt; 
-E   Call log:
-E     - Expect "to_be_visible" with timeout 5000ms
-E     - waiting for get_by_text("\"Regression Testing\" has been")</failure></testcase></testsuite></testsuites>

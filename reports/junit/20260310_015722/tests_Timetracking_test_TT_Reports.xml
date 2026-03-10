@@ -1,1 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="0" skipped="0" tests="1" time="20.907" timestamp="2026-03-10T01:59:40.651686+08:00" hostname="DESKTOP-CQIUSJN"><testcase classname="tests.Timetracking.test_TT_Reports" name="test_tt_reports" time="20.859" /></testsuite></testsuites>
