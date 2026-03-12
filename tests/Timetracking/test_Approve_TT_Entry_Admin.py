@@ -2,7 +2,7 @@ import pytest
 from playwright.sync_api import Page
 from tests.pages.time_tracking_page import TimeTrackingPage
 
-EMPLOYEE_ID = 59  # Admin time-tracking employee ID
+EMPLOYEE_ID = 57  # Admin time-tracking employee ID
 
 
 @pytest.mark.admin

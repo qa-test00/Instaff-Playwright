@@ -1,1 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="0" skipped="0" tests="1" time="13.574" timestamp="2026-03-10T21:25:50.432839+08:00" hostname="DESKTOP-CQIUSJN"><testcase classname="tests.Timeoff.test_TO_Print_Download_Calendar" name="test_to_print_download_calendar" time="13.530" /></testsuite></testsuites>

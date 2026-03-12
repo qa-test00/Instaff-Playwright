@@ -10,7 +10,7 @@ def test_tt_reports(admin_page: Page):
     tt.navigate_to_reports()
     tt.build_tt_report(
         employee_search="auto employee",
-        department="IT",
-        task="Deployment/Support/Calls",
+        department="Office",
+        task="Task 1",
     )
     expect(admin_page.locator("#dt_basic tbody tr").first).to_be_visible()

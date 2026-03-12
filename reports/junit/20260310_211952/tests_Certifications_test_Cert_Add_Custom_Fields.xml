@@ -1,1 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="0" skipped="0" tests="1" time="19.619" timestamp="2026-03-10T21:30:12.998517+08:00" hostname="DESKTOP-CQIUSJN"><testcase classname="tests.Certifications.test_Cert_Add_Custom_Fields" name="test_cert_add_custom_fields" time="19.571" /></testsuite></testsuites>

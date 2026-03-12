@@ -1,9 +1,9 @@
 ========================================================================
   REGRESSION TEST REPORT
-  Date   : 2026-03-10 21:32:58
-  Run ID : 20260310_211952
+  Date   : 2026-03-12 21:35:00
+  Run ID : 20260312_212246
 ========================================================================
-  OVERALL : FAILED  |  32 / 33 test files passed  |  1 failure(s)
+  OVERALL : PASSED  |  33 / 33 test files passed  |  0 failure(s)
 ========================================================================
 
 ========================================================================
@@ -11,7 +11,7 @@
 ------------------------------------------------------------------------
   Module                     Files   Passed   Failed   Status
   -------------------------- -----   ------   ------   ------
-  Time Tracking                  8        7        1   FAILED
+  Time Tracking                  8        8        0   PASSED
   Time Off                       8        8        0   PASSED
   Holiday                        3        3        0   PASSED
   Announcement                   3        3        0   PASSED
@@ -34,7 +34,7 @@
     PASS  Approve TT Entry Manager (run 2)
     PASS  Approve TT Entry Admin (run 2)
     PASS  TT Reports
-    FAIL  TT Attendance Report
+    PASS  TT Attendance Report
 
   [ Time Off ]
     PASS  TO Create Req
@@ -50,6 +50,7 @@
     PASS  Create Holiday
     PASS  Verify Created Holiday
     PASS  Delete Holiday
+    PASS  Create Holiday With Timetracking
 
   [ Announcement ]
     PASS  Create Announcement
@@ -59,11 +60,11 @@
   [ Survey ]
     PASS  Create Survey
     PASS  Respond survey
-    PASS  View Analytics Responses
+    PASS  View Analytics, Responses
     PASS  Close Survey
 
   [ Certifications ]
-    PASS  Cert Add Custom Fields
+    PASS  Cert Add With Custom Fields
     PASS  Cert Approve Pending
     PASS  Cert View
     PASS  Cert Delete Record
@@ -74,17 +75,18 @@
   [ Paystubs ]
     PASS  View Paystubs
 
+  [ Taxforms ]
+    PASS View Taxforms
+
   [ Employee Files ]
     PASS  View Files Personal Employee
 
 ------------------------------------------------------------------------
 
 ========================================================================
-  FAILURES  (1)
+  FAILURES  (0)
 ------------------------------------------------------------------------
 
-  [1] tt attendance report
-       Reason     : Timed out after 15000ms – element not found to be visible: table.k-selectable tbody tr
-       Screenshot : reports\screenshots\tests_Timetracking_test_TT_Attendance_Report_py__test_tt_attendance_report.png
+  None – all tests passed.
 
 ========================================================================

@@ -104,8 +104,7 @@ class TimeTrackingPage(BasePage):
                 break
 
     def approve_first_manager_entry(self) -> None:
-        self.page.get_by_role("link", name="View").nth(1).click()
-        self._dismiss_modal_if_present()
+        self.page.get_by_role("row").filter(has_text="AUTOEMP").get_by_role("link", name="View").click()
         self.page.get_by_role("checkbox").nth(1).check()
         self.page.get_by_role("button", name="Approve Selected Entries").click()
         self._dismiss_modal_if_present()
