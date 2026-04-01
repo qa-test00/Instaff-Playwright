@@ -30,7 +30,10 @@ class AnnouncementPage(BasePage):
         self.expect_success_toast()
 
     def delete_first_announcement(self) -> None:
-        self.page.locator("#collapse-1").get_by_role("button", name="Delete").click()
+        # Expand the first announcement panel (DB-based IDs vary; use the toggle link)
+        self.page.locator("a[data-toggle='collapse']").first.click()
+        self.page.wait_for_timeout(500)
+        self.page.get_by_role("button", name="Delete").first.click()
         self.wait_for_load()
         self.page.get_by_role("button", name="Delete Announcement").click()
         self.wait_for_load()

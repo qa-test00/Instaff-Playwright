@@ -18,21 +18,58 @@ class TimeOffPage(BasePage):
         self.page.get_by_role("link", name=" Time Off Request").click()
         self.wait_for_load()
 
-    def create_request(self, comment: str = "Regression Test") -> None:
-        self.page.get_by_role("button", name="Create New Request").click()
-        self.page.locator("#timeoffcomments").fill(comment)
-        self.page.get_by_role("button", name="Add").click()
-        self.expect_success_toast()
-
     def open_create_modal(self) -> None:
         self.page.get_by_role("button", name="Create New Request").click()
         self.page.wait_for_selector(".modal", state="visible")
 
     def verify_pto_restricted(self) -> None:
         """Assert that the PTO option is disabled in the Type dropdown."""
-        from playwright.sync_api import expect
         pto_option = self.page.locator("#timeofftypeid option[disabled]:has-text('PTO')")
         expect(pto_option).to_have_attribute("disabled", "", timeout=10000)
+
+    def select_type(self, type_label: str) -> None:
+        """Select a time-off type from the Type dropdown by visible label."""
+        self.page.locator("#timeofftypeid").select_option(label=type_label)
+
+    def pick_start_date(self, days_ahead: int) -> None:
+        """Open the Start Date Bootstrap DateTimePicker, select today + days_ahead, then click Done."""
+        from datetime import date, timedelta, datetime
+        target = date.today() + timedelta(days=days_ahead)
+        target_day_str = target.strftime("%m/%d/%Y")  # e.g., "04/11/2026"
+
+        # Wait for any AJAX (e.g., balance lookup after type selection) to settle
+        self.wait_for_load()
+
+        # Show the picker via its JS API (avoids click-dismiss race in Bootstrap modal)
+        self.page.evaluate("$('#startdate').data('DateTimePicker').show()")
+        self.page.wait_for_selector(".bootstrap-datetimepicker-widget", state="visible", timeout=10000)
+
+        # Navigate to the correct month if needed
+        while True:
+            month_year_text = self.page.locator(".datepicker-days .picker-switch").inner_text(timeout=5000)
+            shown = datetime.strptime(month_year_text.strip(), "%B %Y")
+            if (shown.year, shown.month) == (target.year, target.month):
+                break
+            if (shown.year, shown.month) < (target.year, target.month):
+                self.page.evaluate("document.querySelector('.datepicker-days th.next').click()")
+            else:
+                self.page.evaluate("document.querySelector('.datepicker-days th.prev').click()")
+
+        # Click the target day cell via JS to stay within the open picker
+        self.page.evaluate(
+            f"document.querySelector('td[data-action=\"selectDay\"][data-day=\"{target_day_str}\"]').click()"
+        )
+
+        # Click Done / Close via JS
+        self.page.evaluate(
+            "document.querySelector('.bootstrap-datetimepicker-widget a[data-action=\"close\"]').click()"
+        )
+
+    def create_request(self, comment: str = "Regression Test") -> None:
+        self.page.get_by_role("button", name="Create New Request").click()
+        self.page.locator("#timeoffcomments").fill(comment)
+        self.page.get_by_role("button", name="Add").click()
+        self.expect_success_toast()
 
     def close_modal(self) -> None:
         self.page.keyboard.press("Escape")
@@ -60,11 +97,13 @@ class TimeOffPage(BasePage):
         self.page.goto(f"{config.BASE_URL}/manager/timeoff")
         self.wait_for_load()
 
-    def add_manager_request_for_employee(self, comment: str) -> None:
+    def add_manager_request_for_employee(self, comment: str, days_ahead: int = None) -> None:
         self.page.goto(f"{config.BASE_URL}/manager/timeoff/add")
         self.wait_for_load()
         self.page.locator("#employee_id").select_option(label="Auto Employee (AUTOEMP)")
         self.page.locator("#timeofftypeid").select_option(label="Holiday")
+        if days_ahead is not None:
+            self.pick_start_date(days_ahead)
         self.page.locator("#timeoffcomments").fill(comment)
         self.page.get_by_role("button", name="Add").click()
         self.expect_success_toast()
@@ -77,11 +116,13 @@ class TimeOffPage(BasePage):
         self.page.goto(f"{config.BASE_URL}/admin/timeoff")
         self.wait_for_load()
 
-    def add_request_for_employee(self, comment: str) -> None:
+    def add_request_for_employee(self, comment: str, days_ahead: int = None) -> None:
         self.page.goto(f"{config.BASE_URL}/admin/timeoff/add")
         self.wait_for_load()
         self.page.locator("#employee_id").select_option(label="Auto Employee (AUTOEMP)")
         self.page.locator("#timeofftypeid").select_option(label="Holiday")
+        if days_ahead is not None:
+            self.pick_start_date(days_ahead)
         self.page.locator("#timeoffcomments").fill(comment)
         self.page.get_by_role("button", name="Add").click()
         self.expect_success_toast()
@@ -108,7 +149,12 @@ class TimeOffPage(BasePage):
         self.wait_for_load()
 
     def cancel_first_request(self) -> None:
-        cancel_btn = self.page.get_by_role("button", name="Cancel Request").first
+        # Cancel Request may be a <button> (Time Off Manager) or <a> link (calendar page)
+        cancel_btn = (
+            self.page.get_by_role("button", name="Cancel Request")
+            .or_(self.page.get_by_role("link", name="Cancel Request"))
+            .first
+        )
         row = cancel_btn.locator("xpath=ancestor::tr")
 
         self.page.once("dialog", lambda dialog: dialog.accept())
@@ -129,9 +175,10 @@ class TimeOffPage(BasePage):
                 pass
 
         self.wait_for_load()
-        expect(row.get_by_role("button", name="Cancel Request")).to_be_hidden(
-            timeout=15000
-        )
+        expect(
+            row.get_by_role("button", name="Cancel Request")
+            .or_(row.get_by_role("link", name="Cancel Request"))
+        ).to_be_hidden(timeout=15000)
 
     # ------------------------------------------------------------------
     # Admin – Reports

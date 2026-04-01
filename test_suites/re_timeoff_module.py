@@ -17,8 +17,8 @@ from pathlib import Path
 
 ORDERED_TEST_FILES: tuple[str, ...] = (
     "tests/Timeoff/test_TO_Create_Req.py",
-    "tests/Timeoff/test_Approve_TO_Req_Manager.py",
-    "tests/Timeoff/test_Deny_TO_Req_Admin.py",
+    "tests/Timeoff/test_ZA_Approve_TO_Req_Manager.py",
+    "tests/Timeoff/test_ZB_Deny_TO_Req_Admin.py",
     "tests/Timeoff/test_TO_Add_Req_For_Employee.py",
     "tests/Timeoff/test_TO_Mgr_Add_Req_For_Employee.py",
     "tests/Timeoff/test_Generate_TO_Reports.py",

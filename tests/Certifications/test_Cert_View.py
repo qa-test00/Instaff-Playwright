@@ -12,7 +12,7 @@ def test_cert_view(employee_page: Page):
     cert.navigate()
 
     # Step 3: Click the "View" button for the uploaded certification
-    cert.click_view_button("Reg Test")
+    cert.click_view_button("With Custom Fields")
 
     # Step 4: Verify the PDF viewer modal is displayed with the correct file
     cert.verify_pdf_viewer_displayed("2025 Security Awareness.pdf")

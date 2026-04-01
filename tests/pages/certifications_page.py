@@ -39,9 +39,10 @@ class CertificationsPage(BasePage):
 
         self.page.locator("#customfield2value").fill(required_value)
 
-        # Open the Bootstrap Datetimepicker
+        # Open the Bootstrap Datetimepicker; clear first so it always opens in day view
+        self.page.locator("#expiry").fill("")
         self.page.locator("#expiry").click()
-        self.page.wait_for_selector(".bootstrap-datetimepicker-widget", state="visible")
+        self.page.wait_for_selector(".datepicker-days", state="visible")
 
         target_month_year = target_date.strftime("%B %Y")  # e.g. "March 2026"
         target_data_day = target_date.strftime("%m/%d/%Y")  # e.g. "03/16/2026"
@@ -106,6 +107,11 @@ class CertificationsPage(BasePage):
     def check_first_pending_record(self) -> None:
         self.page.locator("input[name='pending_records_checkboxes']").first.check()
 
+    def check_pending_record_for_employee(self, employee_name: str) -> None:
+        self.page.locator("tr").filter(has_text=employee_name).locator(
+            "input[name='pending_records_checkboxes']"
+        ).first.check()
+
     def click_approve_selected(self) -> None:
         self.page.get_by_role("button", name="Approve Selected").click()
         self.page.wait_for_selector("#approveModal", state="visible")
@@ -130,7 +136,7 @@ class CertificationsPage(BasePage):
 
     def search_employee_records(self, search_term: str) -> None:
         self.page.locator("#employee_records_table_filter input[type='search']").fill(search_term)
-        self.page.wait_for_timeout(1000)
+        self.page.wait_for_timeout(2000)
 
     def click_edit_for_employee(self, employee_name: str) -> None:
         self.page.locator("#employee_records_table tbody tr").filter(has_text=employee_name).get_by_role("link", name="Edit").click()

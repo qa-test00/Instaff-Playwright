@@ -14,8 +14,8 @@ def test_cert_approve_pending(admin_page: Page):
     # Step 4: Click "Pending Employee Records" tab
     cert.click_pending_employee_records_tab()
 
-    # Step 5: Check the checkbox of the created certification
-    cert.check_first_pending_record()
+    # Step 5: Check the checkbox for Auto Employee's pending certification
+    cert.check_pending_record_for_employee("Auto Employee")
 
     # Step 6: Click "Approve Selected" button
     cert.click_approve_selected()

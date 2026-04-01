@@ -19,7 +19,7 @@ ORDERED_TEST_FILES: tuple[str, ...] = (
     "tests/Certifications/test_Cert_Add_Custom_Fields.py",
     "tests/Certifications/test_Cert_Approve_Pending.py",
     "tests/Certifications/test_Cert_View.py",
-    "tests/Certifications/test_Cert_Delete_Record.py",
+    "tests/Certifications/test_Z_Cert_Delete_Record.py",
 )
 
 

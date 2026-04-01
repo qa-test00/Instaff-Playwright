@@ -31,6 +31,11 @@ class EmployeeFilesPage(BasePage):
 
     def view_first_file(self) -> None:
         """Click View on the first file listed in the current folder."""
+        self.page.wait_for_selector(
+            "button:has-text('View'), [role='button']:has-text('View')",
+            state="visible",
+            timeout=15000,
+        )
         self.page.get_by_role("button", name="View").first.click()
         self.wait_for_load()
 

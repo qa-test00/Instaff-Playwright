@@ -33,8 +33,8 @@ ORDERED_TEST_FILES: tuple[str, ...] = (
     "tests/Timetracking/test_TT_Attendance_Report.py",
     # --- Time Off ---
     "tests/Timeoff/test_TO_Create_Req.py",
-    "tests/Timeoff/test_Approve_TO_Req_Manager.py",
-    "tests/Timeoff/test_Deny_TO_Req_Admin.py",
+    "tests/Timeoff/test_ZA_Approve_TO_Req_Manager.py",
+    "tests/Timeoff/test_ZB_Deny_TO_Req_Admin.py",
     "tests/Timeoff/test_TO_Add_Req_For_Employee.py",
     "tests/Timeoff/test_TO_Mgr_Add_Req_For_Employee.py",
     "tests/Timeoff/test_Generate_TO_Reports.py",
@@ -43,7 +43,7 @@ ORDERED_TEST_FILES: tuple[str, ...] = (
     # --- Holiday ---
     "tests/Holiday/test_Create_Holiday.py",
     "tests/Holiday/test_Verify_Created_Holiday.py",
-    "tests/Holiday/test_Delete_Holiday.py",
+    "tests/Holiday/test_Z_Delete_Holiday.py",
     # --- Announcement ---
     "tests/Announcement/test_Create_Announcement.py",
     "tests/Announcement/test_View_Announcement.py",
@@ -52,12 +52,12 @@ ORDERED_TEST_FILES: tuple[str, ...] = (
     "tests/Survey/test_Create_Survey.py",
     "tests/Survey/test_Respond_survey.py",
     "tests/Survey/test_View_Analytics_Responses.py",
-    "tests/Survey/test_Close_Survey.py",
+    "tests/Survey/test_Z_Close_Survey.py",
     # --- Certifications ---
     "tests/Certifications/test_Cert_Add_Custom_Fields.py",
     "tests/Certifications/test_Cert_Approve_Pending.py",
     "tests/Certifications/test_Cert_View.py",
-    "tests/Certifications/test_Cert_Delete_Record.py",
+    "tests/Certifications/test_Z_Cert_Delete_Record.py",
     # --- Manager ---
     "tests/Manager/test_Manager_View_Files.py",
     # --- Paystubs ---

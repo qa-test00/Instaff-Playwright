@@ -18,7 +18,7 @@ from pathlib import Path
 ORDERED_TEST_FILES: tuple[str, ...] = (
     "tests/Holiday/test_Create_Holiday.py",
     "tests/Holiday/test_Verify_Created_Holiday.py",
-    "tests/Holiday/test_Delete_Holiday.py",
+    "tests/Holiday/test_Z_Delete_Holiday.py",
 )
 
 

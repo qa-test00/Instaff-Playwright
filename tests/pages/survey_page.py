@@ -94,7 +94,7 @@ class SurveyPage(BasePage):
         self.wait_for_load()
 
     def respond_to_survey(self, survey_title: str = "Regression Testing") -> None:
-        self.page.get_by_role("row", name=f"{survey_title} N/A").get_by_role("link").click()
+        self.page.get_by_role("row", name=f"{survey_title} N/A").locator("a[href*='/surveys/take/']").click()
         self.wait_for_load()
 
         # Q1 – text answer

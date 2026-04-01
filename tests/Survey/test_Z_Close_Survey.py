@@ -11,4 +11,4 @@ def test_close_survey(admin_page: Page):
     survey.close_survey(survey_title="Regression Testing")
     expect(
         admin_page.get_by_text('"Regression Testing" has been')
-    ).to_be_visible()
+    ).to_be_visible(timeout=15000)

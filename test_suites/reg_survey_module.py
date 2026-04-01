@@ -19,7 +19,7 @@ ORDERED_TEST_FILES: tuple[str, ...] = (
     "tests/Survey/test_Create_Survey.py",
     "tests/Survey/test_Respond_survey.py",
     "tests/Survey/test_View_Analytics_Responses.py",
-    "tests/Survey/test_Close_Survey.py",
+    "tests/Survey/test_Z_Close_Survey.py",
 )
 
 
